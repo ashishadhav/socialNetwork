@@ -8,8 +8,25 @@ if(isset($_POST['createaccount'])) {
 	$password = $_POST['password'];
 	$email = $_POST['email'];
 	
-	DB::query('INSERT INTO users VALUES (\'\',:username,:password,:email)',array(':username'=>$username,':password'=>$password,':email'=>$email));
-	echo("SUCCESS");
+	if ( !DB::query('SELECT username FROM users where username=:username',array(':username'=>$username))) {
+
+
+		if ( strlen($username) >=3 && strlen($username) <=32    ) {
+			if (  preg_match('/^[\w]+$/', $username)) {
+			DB::query('INSERT INTO users VALUES (\'\',:username,:password,:email)',array(':username'=>$username,':password'=>password_hash($password,PASSWORD_BCRYPT),':email'=>$email));
+
+			echo("SUCCESS");
+			} else {
+				echo " username can only contain small and large case letters , numbers and underscores";
+			}
+		} else {
+			echo "username must be between 3 and 32 characters";
+		}
+	} else {
+
+		echo "user exists";
+
+	}
 
 
 }
