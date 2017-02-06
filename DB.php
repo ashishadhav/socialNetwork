@@ -23,7 +23,7 @@ class DB {
 			$data = $statement->fetchall();
 			return $data;
 		} else {
-		
+				
 		}
 	}
 
