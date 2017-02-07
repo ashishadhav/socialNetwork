@@ -1,36 +1,40 @@
 <?php
 
 include('DB.php');
+include('LOG.php');
 
-function isloggedin() {
-	if (  isset($_COOKIE['SNID'])) {
-		if ( DB::query('SELECT user_id from login_tokens WHERE token=:token', array(':token'=>sha1($_COOKIE['SNID'])) )){
-	$userid=DB::query('SELECT user_id from login_tokens WHERE token=:token', array(':token'=>sha1($_COOKIE['SNID'])))[0]['user_id'];
-			if( isset($_COOKIE['SNID_2'])){
-			
-				return $userid;
+$username="";
+if(isset($_GET['username'] )){
+	
+	if( DB::query('SELECT username from users where username=:username',array(':username'=>$_GET['username']))) {
+		$username = $_GET['username'];
+		$user_id = DB::query('SELECT id from users where username=:username',array(':username'=>$_GET['username']))[0]['id'];
+
+		$followerid = Login::isloggedin();	
+		$username = $_GET['username'];
+
+		if(isset($_POST['follow'])) {
+
+			$follow = db::query('SELECT follower_id from followers where user_id=:user_id and follower_id=:followerid',array(':user_id'=>$user_id,':followerid'=>$followerid))[0]['follower_id'];
+			if ( $follow!=$followerid ) {
+			db::query('INSERT INTO followers values (\'\',:userid,:followerid)',array(':userid'=>$user_id,':followerid'=>$followerid ));
 			} else {
-
-				$cstrong = True;
-				$token= bin2hex(openssl_random_pseudo_bytes(64,$cstrong));
-				DB::query('INSERT INTO login_tokens VALUES(\'\',:token,:user_id)', array(':token'=>sha1($token),':user_id'=>$userid));
-				DB::query('DELETE from login_tokens where token=:token',array(':token'=>sha1($_COOKIE['SNID'])));
-				setcookie("SNID", $token , time() + 60 * 60 *24 * 7,'/',NULL,NULL,True);
-				setcookie("SNID_2",'1' , time() + 60 * 60 *24 * 3,'/',NULL,NULL,True);
-				
-				return $userid;
+				echo "ALREADY FOLLOWING";
 			}
 		}
+	} else {
+		die("invalid username");
 	}
-
-	return false;
 }
-
-$id=isloggedin();
-if ( $id){
-	echo "LOGGED IN user ID".$id;
-} else {
-	echo "NOT LOGGED IN";
-}
-
 ?>
+
+
+
+<h1> 
+	<?php echo $username; ?> 's PROFILE 
+</h1>
+
+
+<form action="profile.php?username=<?php echo $username; ?>" method="post">
+	<input type="submit" name="follow"  value="Follow"> 
+</form>

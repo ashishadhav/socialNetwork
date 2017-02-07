@@ -17,7 +17,8 @@ class DB {
 
 	public static function query($query,$params = array()){
 		$statement = self::connect()->prepare($query);
-
+		//print_r($params);
+		//echo $query;
 		
 		$statement->execute($params);
 
