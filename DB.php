@@ -17,13 +17,14 @@ class DB {
 
 	public static function query($query,$params = array()){
 		$statement = self::connect()->prepare($query);
+
+		
 		$statement->execute($params);
 
 		if ( explode(' ',$query)[0] == SELECT ) {
 			$data = $statement->fetchall();
 			return $data;
 		} else {
-				
 		}
 	}
 

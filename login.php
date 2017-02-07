@@ -17,7 +17,7 @@ if(isset($_POST['login'])) {
 			DB::query('INSERT INTO login_tokens VALUES(\'\',:token,:user_id)', array(':token'=>sha1($token),':user_id'=>$user_id));
 
 			setcookie("SNID", $token , time() + 60 * 60 *24 * 7,'/',NULL,NULL,True);
-
+			setcookie("SNID_2",'1' , time() + 60 * 60 *24 * 3,'/',NULL,NULL,True);
 		}else {
 			echo "ERR INVALID PASSWORD";
 		}
@@ -29,6 +29,18 @@ if(isset($_POST['login'])) {
 ?>
 
 
+<style> 
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+</style>
 	<h1>Log in to Friends Club</h1>
 	<form  class="login.php"  method="post" >
 		<input type="text" name="username" value="" placeholder="Username..."> <p />
